@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>SMSCrypt</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4CAF50">
+<meta charset=UTF-8>
+<style>
+body{font-family:Arial;padding:20px;background:#f5f5f5;}
+.box{background:white;border-radius:10px;padding:20px;margin:20px auto;max-width:500px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+h1{color:#333;text-align:center;}
+h2{color:#27ae60;}
+input,textarea{width:100%;padding:10px;margin:10px 0;border:1px solid #ccc;border-radius:5px;}
+button{background:#27ae60;color:white;border:none;padding:12px;width:100%;border-radius:5px;font-size:16px;cursor:pointer;}
+.result{background:#f9f9f9;padding:10px;margin:10px 0;border:1px solid #ddd;}
+.icon{width:20px;height:20px;vertical-align:middle;margin-right:5px;}
+</style>
+</head>
+<body><div class=box>
+<h1><img src=https://img.icons8.com/color/48/000000/encryption.png class=icon>SMSCrypt</h1>
+<p style=text-align:center;color:#666;>Шифрование SMS сообщений</p>
+</div>
+<div class=box>
+<h2><img src=https://img.icons8.com/color/24/000000/edit.png class=icon>Шифрование</h2>
+<input id=key1 placeholder=Ключ value=МойКлюч123>
+<textarea id=text1 rows=3>Тест</textarea>
+<button onclick=enc()><img src=https://img.icons8.com/color/24/000000/lock.png class=icon>Зашифровать</button>
+<div class=result id=result1>...</div>
+<button onclick=sms() style=background:#2196F3;><img src=https://img.icons8.com/color/24/000000/sms.png class=icon>Отправить SMS</button>
+</div><div class=box>
+<h2><img src=https://img.icons8.com/color/24/000000/book.png class=icon>Расшифровка</h2>
+<input id=key2 placeholder=Ключ value=МойКлюч123>
+<textarea id=text2 rows=3></textarea>
+<button onclick=dec()><img src=https://img.icons8.com/color/24/000000/unlock.png class=icon>Расшифровать</button>
+<div class=result id=result2>...</div>
+</div><script>
+function enc(){
+var k=document.getElementById("key1").value;
+var t=document.getElementById("text1").value;
+var r="";
+for(var i=0;i<t.length;i++)r+=String.fromCharCode(t.charCodeAt(i)^k.charCodeAt(i%k.length));
+var b=btoa(r);
+document.getElementById("result1").innerHTML="SMSCRYPT:"+b;
+document.getElementById("text2").value="SMSCRYPT:"+b;
+}
+function sms(){
+var t=document.getElementById("result1").innerText;
+var p=prompt("Номер:");
+if(p)window.open("sms:"+p+"?body="+encodeURIComponent(t),"_blank");
+}function dec(){
+var k=document.getElementById("key2").value;
+var t=document.getElementById("text2").value;
+if(t.startsWith("SMSCRYPT:"))t=t.substring(9);
+try{
+var d=atob(t);
+var r="";
+for(var i=0;i<d.length;i++)r+=String.fromCharCode(d.charCodeAt(i)^k.charCodeAt(i%k.length));
+document.getElementById("result2").innerHTML=r;
+}catch(e){alert("Ошибка");}
+}
+</script>
+</body>
+</html>
